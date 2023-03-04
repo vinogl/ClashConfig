@@ -32,11 +32,6 @@ proxies:
   $$PROXY_CONFIG$$
 
 proxy-groups:
-  - name: $$DIRECT_GROUP_NAME$$
-    type: select
-    proxies:
-      - DIRECT
-
   - name: $$PROXY_GROUP_NAME$$
     type: select
     proxies:

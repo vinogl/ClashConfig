@@ -52,7 +52,7 @@ for node_url in node_list:
 
 
 # 生成规则，用于替换模板(template.yaml)中的占位符
-direct_group_name, proxy_group_name, rule_str = direct_rule(rule_path)
+proxy_group_name, rule_str = direct_rule(rule_path)
 
 
 # 读取模板(template.yaml)，并替换占位符
@@ -60,7 +60,6 @@ with open(template_path, 'r') as f:
     template = f.read()
     template = template.replace('  $$PROXY_CONFIG$$', proxy_config_str.strip('\n'))
     template = template.replace('      $$PROXY_NAME$$', proxy_name_str.strip('\n'))
-    template = template.replace('$$DIRECT_GROUP_NAME$$', direct_group_name)
     template = template.replace('$$PROXY_GROUP_NAME$$', proxy_group_name)
     template = template.replace('  $$RULE$$', rule_str.strip('\n'))
 

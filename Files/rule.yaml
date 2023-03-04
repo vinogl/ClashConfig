@@ -1,6 +1,4 @@
-# 注意：直连组要放在代理组前面，否则会导致代理组无法生效
-
-DIRECT_CONNECT:
+DIRECT:
   IP-CIDR:
     - 10.0.0.0/8
     - 172.16.0.0/12
@@ -17,7 +15,6 @@ DIRECT_CONNECT:
     - weibo.com
   GEOIP:
     - CN
-
 
 PROXY:
   MATCH:

@@ -52,7 +52,12 @@ def direct_rule(direct_path):
         direct_list = yaml.safe_load(f)
 
     rule_str = ''  # 用于保存规则
+    proxy_group_name = ''  # 用于保存代理组名称
     for group_name, rule_list in direct_list.items():
+        if group_name != 'DIRECT' or 'REJECT' or 'GLOBAL':
+            # 如果group_name不是DIRECT、REJECT、GLOBAL，则为代理组名称
+            proxy_group_name = group_name
+
         for key, value in rule_list.items():
             # 遍历规则列表，添加规则
             if value is None:
@@ -63,7 +68,5 @@ def direct_rule(direct_path):
                 for item in value:
                     rule_str += '  - %s,%s,%s\n' % (key, item, group_name)
 
-    group_name = list(direct_list.keys())
-
-    return *group_name, rule_str
-
+    # 返回代理组名称和规则字符串
+    return proxy_group_name, rule_str
