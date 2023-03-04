@@ -1,0 +1,24 @@
+# 注意：直连组要放在代理组前面，否则会导致代理组无法生效
+
+DIRECT_CONNECT:
+  IP-CIDR:
+    - 10.0.0.0/8
+    - 172.16.0.0/12
+    - 192.168.0.0/16
+    - 224.0.0.0/4
+    - 240.0.0.0/4
+  DOMAIN-SUFFIX:
+    - csdn.net
+    - bilibili.com
+    - zhihu.com
+    - baidu.com
+    - douban.com
+    - taobao.com
+    - weibo.com
+  GEOIP:
+    - CN
+
+
+PROXY:
+  MATCH:
+    - .*

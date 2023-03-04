@@ -1,0 +1,47 @@
+port: 7890
+socks-port: 7891
+redir-port: 7892
+allow-lan: true
+mode: rule
+log-level: info
+external-controller: 127.0.0.1:9090
+dns:
+  enable: true
+  ipv6: false
+  listen: 0.0.0.0:53
+  nameserver:
+    - 223.5.5.5
+    - 223.6.6.6
+    - 114.114.114.114
+  fallback:
+    - 114.114.114.114
+    - 8.8.8.8
+    - 1.1.1.1
+  fallback-filter:
+    geoip: true
+    geoip-code: CN
+    ipcidr:
+      - 240.0.0.0/4
+    domain:
+      - +.google.com
+      - +.facebook.com
+      - +.youtube.com
+  enhance-dns: true
+
+proxies:
+  $$PROXY_CONFIG$$
+
+proxy-groups:
+  - name: $$DIRECT_GROUP_NAME$$
+    type: select
+    proxies:
+      - DIRECT
+
+  - name: $$PROXY_GROUP_NAME$$
+    type: select
+    proxies:
+      $$PROXY_NAME$$
+      - DIRECT
+
+rules:
+  $$RULE$$

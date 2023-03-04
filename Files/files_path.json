@@ -1,0 +1,7 @@
+{
+  "logo": "Files/logo.txt",
+  "rule": "Files/rule.yaml",
+  "template": "Files/template.yaml",
+  "vmess": "Files/vmess.txt",
+  "config_filename": "config.yaml"
+}
