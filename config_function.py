@@ -4,11 +4,11 @@ import json
 import yaml
 
 
-def url2config(node_url):
+def url2config(proxy_url):
     """
     将vmess的节点转换为clash配置
     """
-    url = urlsplit(node_url)
+    url = urlsplit(proxy_url)
 
     # 解析vmess链接
     if url.scheme == 'vmess':
@@ -44,20 +44,47 @@ def url2config(node_url):
     return config_str, clash_config['name']
 
 
-def direct_rule(direct_path):
+def generate_groups(group_path):
+    """
+    生成代理配置和代理组，用于替换模板(template.yaml)中的占位符
+    """
+    with open(group_path, 'r') as f:
+        group_list = yaml.safe_load(f)
+
+    proxy_config = ''  # 用于保存代理配置
+    proxy_group = ''  # 用于保存代理组配置
+    for group_name, proxies in group_list.items():
+        # 遍历读取的代理组信息
+        proxy_group += \
+            '\n' \
+            '  - name: %s\n' \
+            '    type: select\n' \
+            '    proxies:\n' % group_name
+
+        for proxy_url in proxies:
+            # 遍历节点链接列表
+            if proxy_url in ['DIRECT', 'REJECT', 'GLOBAL']:
+                # 判断是否为特殊规则
+                proxy_group += '      - %s\n' % proxy_url
+            else:
+                # 解析节点链接，生成代理配置和代理组配置
+                config, name = url2config(proxy_url)
+                proxy_config += '  %s\n' % config
+                proxy_group += '      - %s\n' % name
+
+    # 返回代理配置和代理组配置
+    return proxy_config, proxy_group
+
+
+def generate_rules(rule_path):
     """
     生成直连规则，用于替换模板(template.yaml)中的占位符
     """
-    with open(direct_path, 'r') as f:
-        direct_list = yaml.safe_load(f)
+    with open(rule_path, 'r') as f:
+        rule_list = yaml.safe_load(f)
 
     rule_str = ''  # 用于保存规则
-    proxy_group_name = ''  # 用于保存代理组名称
-    for group_name, rule_list in direct_list.items():
-        if group_name != 'DIRECT' or 'REJECT' or 'GLOBAL':
-            # 如果group_name不是DIRECT、REJECT、GLOBAL，则为代理组名称
-            proxy_group_name = group_name
-
+    for group_name, rule_list in rule_list.items():
         for key, value in rule_list.items():
             # 遍历规则列表，添加规则
             if value is None:
@@ -69,4 +96,4 @@ def direct_rule(direct_path):
                     rule_str += '  - %s,%s,%s\n' % (key, item, group_name)
 
     # 返回代理组名称和规则字符串
-    return proxy_group_name, rule_str
+    return rule_str

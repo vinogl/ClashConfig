@@ -32,11 +32,7 @@ proxies:
   $$PROXY_CONFIG$$
 
 proxy-groups:
-  - name: $$PROXY_GROUP_NAME$$
-    type: select
-    proxies:
-      $$PROXY_NAME$$
-      - DIRECT
+  $$PROXY_GROUPS$$
 
 rules:
   $$RULE$$

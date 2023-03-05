@@ -1,0 +1,8 @@
+NETFLIX:
+  - vmess://
+  - vmess://
+
+REGULAR_PROXY:
+  - vmess://
+  - vmess://
+  - DIRECT

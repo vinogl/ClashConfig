@@ -1,4 +1,4 @@
-from config_function import url2config, direct_rule
+from config_function import generate_groups, generate_rules
 import json
 import os
 
@@ -7,11 +7,11 @@ import os
 with open('Files/files_path.json', 'r') as f:
     file_path = json.load(f)
 
-logo_path = file_path["logo"]
-vmess_path = file_path["vmess"]
-rule_path = file_path["rule"]
-template_path = file_path["template"]
-config_filename = file_path["config_filename"]
+logo_path = file_path["logo"]  # logo文件路径
+groups_path = file_path["proxy_groups"]  # 代理组文件路径
+rule_path = file_path["rule"]  # 规则文件路径
+template_path = file_path["template"]  # 模板文件路径
+config_filename = file_path["config_filename"]  # 生成的配置文件名
 
 
 # 打印logo和使用方法
@@ -20,12 +20,12 @@ with open(logo_path, 'r') as f:
 print(
     """
     使用方法：
-    1. 将vmess节点链接保存到%s中，每个链接占一行
-    2. 按需求修改%s内的代理规则
-    3. 运行脚本，输入保存路径，回车
-    4. 生成的配置文件保存在指定路径，文件名为%s
+    1. 分组将节点保存到%s，并将各代理组的规则保存到%s
+    （注意：规则文件中的代理组名称必须与分组文件中的代理组名称一致）
+    2. 运行脚本，输入保存路径，回车
+    3. 生成的配置文件保存在指定路径，文件名为%s
     """
-    % (vmess_path, rule_path, config_filename)
+    % (groups_path, rule_path, config_filename)
 )
 
 
@@ -37,30 +37,18 @@ else:
     save_path = os.path.join(save_path, config_filename)  # 保存到指定路径
 
 
-# 读取节点链接，并保存到node_list列表中
-with open(vmess_path, 'r') as f:
-    node_list = f.read().splitlines()
-node_list = [x for x in node_list if x]  # 去除空行
+# 生成代理配置和代理组信息，用于替换模板中的占位符
+proxy_config, proxy_groups = generate_groups(groups_path)
+
+# 生成规则，用于替换模板中的占位符
+rule_str = generate_rules(rule_path)
 
 
-# 解析节点链接，并保存为字符串，用于替换模板(template.yaml)中的占位符
-proxy_config_str = ''  # 用于保存节点配置
-proxy_name_str = ''  # 用于保存节点名称
-for node_url in node_list:
-    proxy_config_str += '  ' + url2config(node_url)[0] + '\n'
-    proxy_name_str += '      - ' + url2config(node_url)[1] + '\n'
-
-
-# 生成规则，用于替换模板(template.yaml)中的占位符
-proxy_group_name, rule_str = direct_rule(rule_path)
-
-
-# 读取模板(template.yaml)，并替换占位符
+# 读取模板，并替换占位符
 with open(template_path, 'r') as f:
     template = f.read()
-    template = template.replace('  $$PROXY_CONFIG$$', proxy_config_str.strip('\n'))
-    template = template.replace('      $$PROXY_NAME$$', proxy_name_str.strip('\n'))
-    template = template.replace('$$PROXY_GROUP_NAME$$', proxy_group_name)
+    template = template.replace('  $$PROXY_CONFIG$$', proxy_config.strip('\n'))
+    template = template.replace('  $$PROXY_GROUPS$$', proxy_groups.strip('\n'))
     template = template.replace('  $$RULE$$', rule_str.strip('\n'))
 
 
