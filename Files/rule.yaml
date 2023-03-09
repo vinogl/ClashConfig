@@ -16,9 +16,10 @@ DIRECT:
   GEOIP:
     - CN
 
-NETFLIX:
+US_PROXY:
   DOMAIN-SUFFIX:
     - netflix.com
+    - openai.com
 
 REGULAR_PROXY:
   MATCH:

@@ -1,4 +1,4 @@
-from config_function import generate_groups, generate_rules
+from method import generate_groups, generate_rules
 import json
 import os
 
