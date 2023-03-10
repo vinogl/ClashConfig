@@ -13,6 +13,7 @@ DIRECT:
     - douban.com
     - taobao.com
     - weibo.com
+    - oracle.com
   GEOIP:
     - CN
 
